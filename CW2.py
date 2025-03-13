@@ -47,6 +47,7 @@ def load_data(file_path, delimiter=','):
 def filter_data(data):
     # Check if data exists
     if data is None:
+        warnings.warn("Task 2: Warning - Data does not exist.")
         return None
     
     filtered_data = None
@@ -64,6 +65,7 @@ def filter_data(data):
 def statistics_data(data):
     # Check if data exists
     if data is None:
+        warnings.warn("Task 3: Warning - Data does not exist.")
         return None
     
     coefficient_of_variation = None
@@ -86,6 +88,7 @@ def statistics_data(data):
 def split_data(data, test_size=0.3, random_state=1):
     # Check if data exists
     if data is None:
+        warnings.warn("Task 4: Warning - Data does not exist.")
         return None
     
     x_train, x_test, y_train, y_test = None, None, None, None
@@ -108,7 +111,17 @@ def split_data(data, test_size=0.3, random_state=1):
 # Task 5 [8 marks]: 
 def train_decision_tree(x_train, y_train,ccp_alpha=0):
     model=None
-    # Insert your code here for task 5
+    # Check if data exists
+    if x_train is None or y_train is None:
+        warnings.warn("Task 5: Warning - Training data does not exist.")
+        return None
+    
+    # Create decision tree
+    model = DecisionTreeClassifier(random_state=1, ccp_alpha=ccp_alpha)
+    # Train decision tree on training data and training labels
+    model.fit(x_train, y_train)
+
+    # Return tree
     return model
 
 # Task 6 [8 marks]: 
