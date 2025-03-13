@@ -19,13 +19,13 @@ def print_tree_structure(model, header_list):
     
 # Task 1 [8 marks]: 
 def load_data(file_path, delimiter=','):
-    num_rows, data, header_list=None, None, None
     # Check file exists
     if not os.path.isfile(file_path):
         warnings.warn(f"Task 1: Warning - CSV file '{file_path}' does not exist.")
         return None, None, None
     
     try:
+        num_rows, data, header_list=None, None, None
         # Load CSV
         df = pd.read_csv(file_path, delimiter=delimiter)
         # Get headers
@@ -40,28 +40,68 @@ def load_data(file_path, delimiter=','):
 
     # Error opening file
     except Exception as e:
-        warnings.warn(f"Task 1: Error loading file '{file_path}': {e}")
+        warnings.warn(f"Error opening file: '{file_path}': {e}")
         return None, None, None
 
 # Task 2[8 marks]: 
 def filter_data(data):
-    filtered_data=[None]*1
-    print(data)
+    # Check if data exists
+    if data is None:
+        return None
+    
+    filtered_data = None
+    
+    # Check for rows (axis = 1) which contain an invalid value of -99
+    invalid = np.any(data == -99, axis = 1)
 
+    # Filter out invalild rows
+    filtered_data = data[~invalid]
+
+    # Return filtered data
     return filtered_data
 
 # Task 3 [8 marks]: 
 def statistics_data(data):
-    coefficient_of_variation=None
-    # Insert your code here for task 3
+    # Check if data exists
+    if data is None:
+        return None
+    
+    coefficient_of_variation = None
 
+    # Filter data
+    fdata = filter_data(data)
+
+    # Remove 'label' column (last column)
+    values = fdata[:, :-1]
+
+    # Calculate mean and std by column
+    mean_values = np.mean(values, axis=0)
+    std_values = np.std(values, axis=0)
+
+    # Compute coefficient, returning infinity where mean = 0
+    coefficient_of_variation = np.where(mean_values != 0, std_values / mean_values, np.inf)
     return coefficient_of_variation
 
 # Task 4 [8 marks]: 
 def split_data(data, test_size=0.3, random_state=1):
-    x_train, x_test, y_train, y_test=None, None, None, None
+    # Check if data exists
+    if data is None:
+        return None
+    
+    x_train, x_test, y_train, y_test = None, None, None, None
+
+    # Filter data
+    fdata = filter_data(data)
+
+    # Seperate values and label (take out last column)
+    x = fdata[:, :-1] # Values
+    y = fdata[:, -1] # Labels
+
+    # Split data with stratified smapling
+    x_train, x_test, y_train, y_test = train_test_split(
+        x, y, test_size=test_size, random_state=random_state, stratify=y
+    )
     np.random.seed(1)
-    # Insert your code here for task 4
 
     return x_train, x_test, y_train, y_test
 
@@ -129,19 +169,20 @@ if __name__ == "__main__":
     num_rows_filtered=data_filtered.shape[0]
     print(f"Data is filtered. Number of Rows: {num_rows_filtered}"); 
     print("-" * 50)
-"""
+
     # Data Statistics
     coefficient_of_variation = statistics_data(data_filtered)
     print("Coefficient of Variation for each feature:")
     for header, coef_var in zip(header_list[:-1], coefficient_of_variation):
         print(f"{header}: {coef_var}")
     print("-" * 50)
+    
     # Split data
     x_train, x_test, y_train, y_test = split_data(data_filtered)
     print(f"Train set size: {len(x_train)}")
     print(f"Test set size: {len(x_test)}")
     print("-" * 50)
-    
+    """
     # Train initial Decision Tree
     model = train_decision_tree(x_train, y_train)
     print("Initial Decision Tree Structure:")
