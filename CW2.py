@@ -125,9 +125,17 @@ def train_decision_tree(x_train, y_train,ccp_alpha=0):
     return model
 
 # Task 6 [8 marks]: 
-def make_predictions(model, X_test):
+def make_predictions(model, x_test):
     y_test_predicted=None
-    # Insert your code here for task 6
+    # Check if data exists
+    if model is None or x_test is None:
+        warnings.warn("Task 6: Warning - Model or test data does not exist.")
+        return None
+    
+    # Predict labels for test data based on training data
+    y_test_predicted = model.predict(x_test)
+
+    # Return predicted labels
     return y_test_predicted
 
 # Task 7 [8 marks]: 
@@ -195,13 +203,13 @@ if __name__ == "__main__":
     print(f"Train set size: {len(x_train)}")
     print(f"Test set size: {len(x_test)}")
     print("-" * 50)
-    """
+    
     # Train initial Decision Tree
     model = train_decision_tree(x_train, y_train)
     print("Initial Decision Tree Structure:")
     print_tree_structure(model, header_list)
     print("-" * 50)
-    
+    """
     # Evaluate initial model
     acc_test, recall_test = evaluate_model(model, x_test, y_test)
     print(f"Initial Decision Tree - Test Accuracy: {acc_test:.2%}, Recall: {recall_test:.2%}")
