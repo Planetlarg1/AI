@@ -285,7 +285,7 @@ def optimal_depth_two_features(x_train, y_train, x_test, y_test, header_list):
 
     # Extract data for most important features
     x_train_two = x_train[:, [most_important_feature_index, second_important_feature_index]]
-    x_test_two = x_train[:, [most_important_feature_index, second_important_feature_index]]
+    x_test_two = x_test[:, [most_important_feature_index, second_important_feature_index]]
 
     # Find optimal ccp_alpha value
     best_ccp_alpha = optimal_ccp_alpha(x_train_two, y_train, x_test_two, y_test)
