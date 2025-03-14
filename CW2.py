@@ -109,7 +109,7 @@ def split_data(data, test_size=0.3, random_state=1):
     return x_train, x_test, y_train, y_test
 
 # Task 5 [8 marks]: 
-def train_decision_tree(x_train, y_train,ccp_alpha=0):
+def train_decision_tree(x_train, y_train, ccp_alpha=0):
     model=None
     # Check if data exists
     if x_train is None or y_train is None:
@@ -211,7 +211,7 @@ def tree_depths(model):
     return depth
 
  # Task 10 [8 marks]: 
-def important_feature(x_train, y_train,header_list):
+def important_feature(x_train, y_train, header_list):
     best_feature=None
     # Check if data exists
     if x_train is None or y_train is None or header_list is None:
@@ -244,14 +244,14 @@ def important_feature(x_train, y_train,header_list):
     
 # Task 11 [10 marks]: 
 def optimal_ccp_alpha_single_feature(x_train, y_train, x_test, y_test, header_list):
-    optimal_ccp_alpha=0
+    best_ccp_alpha=0
     # Check if data exists
-    if x_train is None or y_train is None:
+    if any(x is None for x in [x_train, y_train, x_test, y_test, header_list]):
         warnings.warn("Task 11: Warning - Data does not exist.")
         return None
     
     # Extract most important feature
-    most_important_feature = important_feature(x_train, y_train)
+    most_important_feature = important_feature(x_train, y_train, header_list)
     most_important_feature_index = header_list.index(most_important_feature)
 
     # Create 2D array of training data
@@ -259,14 +259,43 @@ def optimal_ccp_alpha_single_feature(x_train, y_train, x_test, y_test, header_li
     s_x_test = x_test[:, most_important_feature_index].reshape(-1, 1)
 
     # Find optimal ccp_alpha value
-    optimal_ccp_alpha = optimal_ccp_alpha(s_x_train, y_train, s_x_test, y_test)
+    best_ccp_alpha = optimal_ccp_alpha(s_x_train, y_train, s_x_test, y_test)
 
-    return optimal_ccp_alpha
+    return best_ccp_alpha
 
 # Task 12 [10 marks]: 
 def optimal_depth_two_features(x_train, y_train, x_test, y_test, header_list):
     optimal_depth=None
-    # Insert your code here for task 12
+    # Check if data exists
+    if any(x is None for x in [x_train, y_train, x_test, y_test, header_list]):
+        warnings.warn("Task 12: Warning - Data does not exist.")
+        return None
+    
+    # Extract most important feature
+    most_important_feature = important_feature(x_train, y_train, header_list)
+    most_important_feature_index = header_list.index(most_important_feature)
+
+    # Remove most important feature
+    remaining_features = [feature for i, feature in enumerate(header_list) if i != most_important_feature_index]
+
+    # Find the second most important feature
+    second_important_feature = important_feature(x_train[:, [i for i in range(x_train.shape[1]) if i != most_important_feature_index]], 
+                                                 y_train, remaining_features)
+    second_important_feature_index = header_list.index(second_important_feature)
+
+    # Extract data for most important features
+    x_train_two = x_train[:, [most_important_feature_index, second_important_feature_index]]
+    x_test_two = x_train[:, [most_important_feature_index, second_important_feature_index]]
+
+    # Find optimal ccp_alpha value
+    best_ccp_alpha = optimal_ccp_alpha(x_train_two, y_train, x_test_two, y_test)
+
+    # Make tree and find depth with given ccp_alpha value
+    model = DecisionTreeClassifier(random_state=1, ccp_alpha=best_ccp_alpha)
+    model.fit(x_train_two, y_train)
+    optimal_depth = model.get_depth()
+
+    # Return depth
     return optimal_depth    
 
 # Example usage (Main section):
@@ -336,15 +365,15 @@ if __name__ == "__main__":
     print("-" * 50)
     
     # Feature importance
-    important_feature_name = important_feature(x_train, y_train,header_list)
+    important_feature_name = important_feature(x_train, y_train, header_list)
     print(f"Important Feature for Fraudulent Transaction Prediction: {important_feature_name}")
     print("-" * 50)
-    """
+    
     # Test optimal ccp_alpha with single feature
     optimal_alpha_single = optimal_ccp_alpha_single_feature(x_train, y_train, x_test, y_test, header_list)
     print(f"Optimal ccp_alpha using single most important feature: {optimal_alpha_single:.4f}")
     print("-" * 50)
-    
+    """
     # Test optimal depth with two features
     optimal_depth_two = optimal_depth_two_features(x_train, y_train, x_test, y_test, header_list)
     print(f"Optimal tree depth using two most important features: {optimal_depth_two}")
