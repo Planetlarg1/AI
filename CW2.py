@@ -162,7 +162,7 @@ def optimal_ccp_alpha(x_train, y_train, x_test, y_test):
 
     # Check if data exists
     if any(x is None for x in [x_train, y_train, x_test, y_test]):
-        warnings.warn("Task 8: Warning - Some data does not exist.")
+        warnings.warn("Task 8: Warning - Not all data exists.")
         return None
 
     # Create and train unpruned tree
@@ -171,11 +171,16 @@ def optimal_ccp_alpha(x_train, y_train, x_test, y_test):
 
     # Calculate unpruned accuracy
     unpruned_accuracy, _ = evaluate_model(unpruned_model, x_test, y_test)
+    # Check if unpruned model has 100% accuracy, then return 0
+    if np.isclose(unpruned_accuracy, 1):
+        return 0
     # Allow 1% drop in accuracy
     accuracy_threshold = unpruned_accuracy - 0.01
 
     # Find optimal ccp_alpha value
-    for alpha in np.arange(0.001, 1.0, 0.001): # Increment from 0.001 to 1 by 0.001 each time
+    optimal_ccp_alpha = 0.001
+    for alpha in np.arange(0.001, 1.001, 0.001): # Increment from 0.001 to 1 by 0.001 each time
+        # Train decision tree
         model = DecisionTreeClassifier(random_state=1, ccp_alpha=alpha)
         model.fit(x_train, y_train)
 
@@ -208,7 +213,24 @@ def tree_depths(model):
  # Task 10 [8 marks]: 
 def important_feature(x_train, y_train,header_list):
     best_feature=None
-    # Insert your code here for task 10
+    # Check if data exists
+    if x_train is None or y_train is None or header_list is None:
+        warnings.warn("Task 10: Warning - Not all data exists.")
+        return None
+    
+    # Iterate through ccp_alpha values until the depth is 1
+    for alpha in np.arange(0, 1.01, 0.01):
+        # Train decision tree
+        model = DecisionTreeClassifier(random_state=1, ccp_alpha=alpha)
+        model.fit(x_train, y_train)
+
+        # Get tree depth
+        depth = model.get_depth()
+
+        # If tree is depth 1, return most important feature
+        if depth == 1:
+            
+
     return best_feature
     
 # Task 11 [10 marks]: 
@@ -279,7 +301,7 @@ if __name__ == "__main__":
     print("Optimized Decision Tree Structure:")
     print_tree_structure(model_optimized, header_list)
     print("-" * 50)
-    """
+    
     # Get tree depths
     depth_initial = tree_depths(model)
     depth_pruned = tree_depths(model_pruned)
@@ -288,7 +310,7 @@ if __name__ == "__main__":
     print(f"Pruned Decision Tree Depth: {depth_pruned}")
     print(f"Optimized Decision Tree Depth: {depth_optimized}")
     print("-" * 50)
-    
+    """
     # Feature importance
     important_feature_name = important_feature(x_train, y_train,header_list)
     print(f"Important Feature for Fraudulent Transaction Prediction: {important_feature_name}")
