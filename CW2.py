@@ -141,7 +141,19 @@ def make_predictions(model, x_test):
 # Task 7 [8 marks]: 
 def evaluate_model(model, x, y):
     accuracy, recall=None,None
-    # Insert your code here for task 7
+    # Check if data exists
+    if model is None or x is None or y is None:
+        warnings.warn("Task 7: Warning - Model or data does not exist.")
+        return None, None
+    
+    # Make predictions
+    py = model.predict(x)
+
+    # Calculate accuracy and recall of predictions against actual values
+    accuracy = accuracy_score(y, py)
+    recall = recall_score(y, py)
+
+    # Return success
     return accuracy, recall
 
 # Task 8 [8 marks]: 
