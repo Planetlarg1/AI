@@ -189,14 +189,20 @@ def optimal_ccp_alpha(x_train, y_train, x_test, y_test):
         # Update optimal ccp_alpha value
         optimal_ccp_alpha = alpha
 
-
     return optimal_ccp_alpha
 
 # Task 9 [8 marks]: 
 def tree_depths(model):
     depth=None
-    # Get the depth of the unpruned tree
-    # Insert your code here for task 9
+    # Check if data exists
+    if model is None:
+        warnings.warn("Task 9: Warning - Model does not exist.")
+        return None
+    
+    # Get depth of tree
+    depth = model.get_depth()
+
+    # Return depth
     return depth
 
  # Task 10 [8 marks]: 
