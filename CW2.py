@@ -373,7 +373,7 @@ if __name__ == "__main__":
     optimal_alpha_single = optimal_ccp_alpha_single_feature(x_train, y_train, x_test, y_test, header_list)
     print(f"Optimal ccp_alpha using single most important feature: {optimal_alpha_single:.4f}")
     print("-" * 50)
-    """
+    
     # Test optimal depth with two features
     optimal_depth_two = optimal_depth_two_features(x_train, y_train, x_test, y_test, header_list)
     print(f"Optimal tree depth using two most important features: {optimal_depth_two}")
@@ -383,6 +383,3 @@ if __name__ == "__main__":
 # Please tell the lines that are relavant to that reference.
 # For example: 
 # Line 80-87 is inspired by a code at https://stackoverflow.com/questions/48414212/how-to-calculate-accuracy-from-decision-trees
-
-
-"""
