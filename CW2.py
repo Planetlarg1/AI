@@ -229,9 +229,18 @@ def important_feature(x_train, y_train,header_list):
 
         # If tree is depth 1, return most important feature
         if depth == 1:
-            
+            best_feature = header_list[model.tree_.feature[0]]
+            return best_feature
 
-    return best_feature
+        # If depth is > 1, keep track of root to return as last valid feature
+        elif depth > 1:
+            best_feature = header_list[model.tree_.feature[0]]
+
+        # If depth skips 1 straight to 0, return last valid feature
+        elif depth == 0 and best_feature is not None:
+            return best_feature
+        
+    return None
     
 # Task 11 [10 marks]: 
 def optimal_ccp_alpha_single_feature(x_train, y_train, x_test, y_test, header_list):
@@ -310,12 +319,12 @@ if __name__ == "__main__":
     print(f"Pruned Decision Tree Depth: {depth_pruned}")
     print(f"Optimized Decision Tree Depth: {depth_optimized}")
     print("-" * 50)
-    """
+    
     # Feature importance
     important_feature_name = important_feature(x_train, y_train,header_list)
     print(f"Important Feature for Fraudulent Transaction Prediction: {important_feature_name}")
     print("-" * 50)
-    
+    """
     # Test optimal ccp_alpha with single feature
     optimal_alpha_single = optimal_ccp_alpha_single_feature(x_train, y_train, x_test, y_test, header_list)
     print(f"Optimal ccp_alpha using single most important feature: {optimal_alpha_single:.4f}")
