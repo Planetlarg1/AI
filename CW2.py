@@ -160,7 +160,35 @@ def evaluate_model(model, x, y):
 def optimal_ccp_alpha(x_train, y_train, x_test, y_test):
     optimal_ccp_alpha=None
 
-    # Insert your code here for task 8
+    # Check if data exists
+    if any(x is None for x in [x_train, y_train, x_test, y_test]):
+        warnings.warn("Task 8: Warning - Some data does not exist.")
+        return None
+
+    # Create and train unpruned tree
+    unpruned_model = DecisionTreeClassifier(random_state=1, ccp_alpha=0)
+    unpruned_model.fit(x_train, y_train)
+
+    # Calculate unpruned accuracy
+    unpruned_accuracy, _ = evaluate_model(unpruned_model, x_test, y_test)
+    # Allow 1% drop in accuracy
+    accuracy_threshold = unpruned_accuracy - 0.01
+
+    # Find optimal ccp_alpha value
+    for alpha in np.arange(0.001, 1.0, 0.001): # Increment from 0.001 to 1 by 0.001 each time
+        model = DecisionTreeClassifier(random_state=1, ccp_alpha=alpha)
+        model.fit(x_train, y_train)
+
+        # Compute accuracy
+        accuracy, _ = evaluate_model(model, x_test, y_test)
+
+        # Break when accuracy falls below threshold
+        if accuracy < accuracy_threshold:
+            break
+
+        # Update optimal ccp_alpha value
+        optimal_ccp_alpha = alpha
+
 
     return optimal_ccp_alpha
 
@@ -221,7 +249,7 @@ if __name__ == "__main__":
     print("Initial Decision Tree Structure:")
     print_tree_structure(model, header_list)
     print("-" * 50)
-    """
+    
     # Evaluate initial model
     acc_test, recall_test = evaluate_model(model, x_test, y_test)
     print(f"Initial Decision Tree - Test Accuracy: {acc_test:.2%}, Recall: {recall_test:.2%}")
@@ -236,6 +264,7 @@ if __name__ == "__main__":
     print(f"Pruned Decision Tree - Test Accuracy: {acc_test_pruned:.2%}, Recall: {recall_test_pruned:.2%}")
     print("-" * 50)
     # Find optimal ccp_alpha
+    
     optimal_alpha = optimal_ccp_alpha(x_train, y_train, x_test, y_test)
     print(f"Optimal ccp_alpha for pruning: {optimal_alpha:.4f}")
     print("-" * 50)
@@ -244,7 +273,7 @@ if __name__ == "__main__":
     print("Optimized Decision Tree Structure:")
     print_tree_structure(model_optimized, header_list)
     print("-" * 50)
-    
+    """
     # Get tree depths
     depth_initial = tree_depths(model)
     depth_pruned = tree_depths(model_pruned)
