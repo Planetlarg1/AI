@@ -113,7 +113,7 @@ def train_decision_tree(x_train, y_train,ccp_alpha=0):
     model=None
     # Check if data exists
     if x_train is None or y_train is None:
-        warnings.warn("Task 5: Warning - Training data does not exist.")
+        warnings.warn("Task 5: Warning - Data does not exist.")
         return None
     
     # Create decision tree
@@ -129,7 +129,7 @@ def make_predictions(model, x_test):
     y_test_predicted=None
     # Check if data exists
     if model is None or x_test is None:
-        warnings.warn("Task 6: Warning - Model or test data does not exist.")
+        warnings.warn("Task 6: Warning - Data does not exist.")
         return None
     
     # Predict labels for test data based on training data
@@ -143,7 +143,7 @@ def evaluate_model(model, x, y):
     accuracy, recall=None,None
     # Check if data exists
     if model is None or x is None or y is None:
-        warnings.warn("Task 7: Warning - Model or data does not exist.")
+        warnings.warn("Task 7: Warning - Data does not exist.")
         return None, None
     
     # Make predictions
@@ -162,7 +162,7 @@ def optimal_ccp_alpha(x_train, y_train, x_test, y_test):
 
     # Check if data exists
     if any(x is None for x in [x_train, y_train, x_test, y_test]):
-        warnings.warn("Task 8: Warning - Not all data exists.")
+        warnings.warn("Task 8: Warning - Data does not exist.")
         return None
 
     # Create and train unpruned tree
@@ -201,7 +201,7 @@ def tree_depths(model):
     depth=None
     # Check if data exists
     if model is None:
-        warnings.warn("Task 9: Warning - Model does not exist.")
+        warnings.warn("Task 9: Warning - Data does not exist.")
         return None
     
     # Get depth of tree
@@ -215,7 +215,7 @@ def important_feature(x_train, y_train,header_list):
     best_feature=None
     # Check if data exists
     if x_train is None or y_train is None or header_list is None:
-        warnings.warn("Task 10: Warning - Not all data exists.")
+        warnings.warn("Task 10: Warning - Data does not exist.")
         return None
     
     # Iterate through ccp_alpha values until the depth is 1
@@ -244,8 +244,23 @@ def important_feature(x_train, y_train,header_list):
     
 # Task 11 [10 marks]: 
 def optimal_ccp_alpha_single_feature(x_train, y_train, x_test, y_test, header_list):
-    optimal_ccp_alpha=None
-    # Insert your code here for task 11
+    optimal_ccp_alpha=0
+    # Check if data exists
+    if x_train is None or y_train is None:
+        warnings.warn("Task 11: Warning - Data does not exist.")
+        return None
+    
+    # Extract most important feature
+    most_important_feature = important_feature(x_train, y_train)
+    most_important_feature_index = header_list.index(most_important_feature)
+
+    # Create 2D array of training data
+    s_x_train = x_train[:, most_important_feature_index].reshape(-1, 1)
+    s_x_test = x_test[:, most_important_feature_index].reshape(-1, 1)
+
+    # Find optimal ccp_alpha value
+    optimal_ccp_alpha = optimal_ccp_alpha(s_x_train, y_train, s_x_test, y_test)
+
     return optimal_ccp_alpha
 
 # Task 12 [10 marks]: 
